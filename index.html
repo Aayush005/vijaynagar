@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vijaynagar Dynasty MCQ Quiz</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Accommodate fixed elements */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Timer Styling */
+        .timer {
+            position: fixed;          /* Fixes the position relative to the viewport */
+            top: 20px;                /* Positions 20px from the top */
+            right: 20px;              /* Positions 20px from the right */
+            font-size: 1.5rem;        /* Sets a readable font size */
+            color: #d9534f;           /* Sets the text color (red) */
+            font-weight: bold;        /* Makes the text bold */
+            z-index: 1000;            /* Ensures the timer stays above other elements */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 10px 15px;       /* Adds padding around the timer text */
+            border-radius: 5px;       /* Rounds the corners of the timer box */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+        }
+
+        /* Question Map Sidebar Styling */
+        .question-map {
+            position: fixed;          
+            top: 80px;                /* Positioned below the timer */
+            right: 20px;               /* Positioned on the right */
+            width: 180px;              /* Increased width to accommodate 5 columns */
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;             
+            max-height: 90vh;         
+            overflow-y: auto;         
+        }
+
+        .question-map h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Update #questionLinks to Use CSS Grid */
+        #questionLinks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px; /* Adjust the spacing between links as needed */
+            justify-items: center; /* Centers the links within each grid cell */
+        }
+
+        /* Adjust .question-map .question-link Styling */
+        .question-map .question-link {
+            padding: 5px 0; /* Reduces vertical padding */
+            font-size: 0.9rem; /* Slightly smaller font size for better fit */
+            width: 100%; /* Ensures the link takes the full width of the grid cell */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            border-radius: 4px; /* Maintains rounded corners */
+            text-align: center; /* Centers the text within the link */
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .question-map .question-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Add Correct and Incorrect Classes for Highlighting */
+        .question-map .question-link.correct {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border-color: #28a745; /* Green border */
+        }
+
+        .question-map .question-link.incorrect {
+            background-color: #dc3545; /* Red background */
+            color: #fff; /* White text */
+            border-color: #dc3545; /* Red border */
+        }
+
+        /* Add Attempted Class for Highlighting */
+        .question-map .question-link.attempted {
+            background-color: #17a2b8; /* Blue background for attempted questions */
+            color: #fff; /* White text */
+            border-color: #17a2b8; /* Blue border */
+        }
+
+        /* Submit Button and Score Styling */
+        .question-map .submit-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .question-map .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .question-map .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-map .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .question-map .result {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-right: 200px; /* Accommodates the question map sidebar on the right */
+            margin-top: 50px;     /* Maintains spacing from the top */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .options label:hover {
+            background-color: #e6f0ff;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #17a2b8;
+        }
+
+        /* Feedback Message Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .feedback.right {
+            color: #28a745; /* Green for correct answers */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* Red for incorrect answers */
+        }
+
+        .feedback.not-attempted {
+            color: #6c757d; /* Gray for not attempted */
+        }
+
+        /* Alert when time is low */
+        .alert {
+            animation: blink 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-right: 0; /* Removes right margin on small screens */
+            }
+
+            .question-map {
+                display: none; /* Hides the question map on small screens */
+            }
+
+            .toggle-question-map {
+                display: block; /* Shows toggle button on small screens */
+            }
+        }
+
+        /* Toggle Button for Question Map (Visible on Small Screens) */
+        .toggle-question-map {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Positioned on the right */
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active State for Question Map on Small Screens */
+        .question-map.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">10:00</div>
+
+    <!-- Toggle Button for Question Map (Visible on Small Screens) -->
+    <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
+
+    <!-- Question Map Sidebar -->
+    <div class="question-map" id="questionMap">
+        <h2>Question Map</h2>
+        <div id="questionLinks">
+            <!-- Question links will be injected here by JavaScript -->
+        </div>
+        <!-- Submit Button and Score Display Below the Question Links -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="checkAnswers()">Submit</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <h1>Vijaynagar Dynasty MCQ Quiz</h1>
+        
+        <form id="quizForm">
+            <!-- Questions will be injected here by JavaScript -->
+        </form>
+
+        <!-- Submit Button and Score Display Below the Questions List -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtnBelow" onclick="checkAnswers()">Submit</button>
+            <div id="resultBelow" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Declare shuffledQuestions globally
+        let shuffledQuestions = [];
+
+        // Replace the following array with your own questions
+        const questions = [
+  // 1. Founders and Dynasties
+  {
+    id: 'q1',
+    question: 'Who were the founders of the Sangama Dynasty?',
+    options: [
+      { text: 'Vira Narasimha & Krishnadeva Raya', isCorrect: false },
+      { text: 'Harihara I & Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha & Vira Narasimha', isCorrect: false },
+      { text: 'Tirumal & Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q2',
+    question: 'In which year was the Vijayanagara Empire established?',
+    options: [
+      { text: '1336 CE', isCorrect: true },
+      { text: '1485 CE', isCorrect: false },
+      { text: '1505 CE', isCorrect: false },
+      { text: '1570 CE', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q3',
+    question: 'What was the first capital of the Vijayanagara Empire?',
+    options: [
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false },
+      { text: 'Anegondi', isCorrect: true },
+      { text: 'Madurai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q4',
+    question: 'Which dynasty ruled Vijayanagara immediately before the Saluva Dynasty?',
+    options: [
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false },
+      { text: 'Hoysala', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q5',
+    question: 'Who founded the Aravidu Dynasty?',
+    options: [
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Tirumal', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q6',
+    question: 'Approximately how many years did the four dynasties of Vijayanagara rule?',
+    options: [
+      { text: '200 years', isCorrect: false },
+      { text: '300 years', isCorrect: true },
+      { text: '400 years', isCorrect: false },
+      { text: '500 years', isCorrect: false }
+    ]
+  },
+
+  // 2. Capitals and Territorial Expansion
+  {
+    id: 'q7',
+    question: 'After Venkata II ascended the throne, what was the capital of the Aravidu Dynasty?',
+    options: [
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: true },
+      { text: 'Nagalpur', isCorrect: false },
+      { text: 'Anegondi', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q8',
+    question: 'Which river was declared the boundary between the Bahmani Sultanate and Vijayanagara?',
+    options: [
+      { text: 'Tungabhadra', isCorrect: false },
+      { text: 'Krishna', isCorrect: true },
+      { text: 'Godavari', isCorrect: false },
+      { text: 'Kaveri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q9',
+    question: 'Which new city was built by Krishnadeva Raya?',
+    options: [
+      { text: 'Anegondi', isCorrect: false },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Nagalpur', isCorrect: true },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q10',
+    question: 'Which city was established by King Adyar in 1612 CE?',
+    options: [
+      { text: 'Mysore', isCorrect: true },
+      { text: 'Madurai', isCorrect: false },
+      { text: 'Hoysala', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+
+  // 3. Key Rulers and Their Contributions
+  {
+    id: 'q11',
+    question: 'Who was the last ruler of the Sangama Dynasty?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Virubaksh I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q12',
+    question: 'Which ruler built a dam on the Tungabhadra river in 1410 CE?',
+    options: [
+      { text: 'Devaraya I', isCorrect: true },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q13',
+    question: 'Who succeeded Harihara I as the ruler of the Sangama Dynasty?',
+    options: [
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q14',
+    question: 'Which ruler is known as the most glorious king of the Sangama Dynasty?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q15',
+    question: 'Which ruler of Vijayanagara was also known as Imadidevaraya?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q16',
+    question: 'Which ruler was described by Babur as one of the most powerful Hindu rulers?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q17',
+    question: 'Who was the last ruler of the Aravidu Dynasty?',
+    options: [
+      { text: 'Tirumal', isCorrect: false },
+      { text: 'Venkata II', isCorrect: false },
+      { text: 'Ranga III', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+
+  // 4. Military and Diplomacy
+  {
+    id: 'q18',
+    question: 'Which ruler conquered the Hoysala Kingdom in 1346 CE?',
+    options: [
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q19',
+    question: 'Which ruler sent an embassy to China in 1374 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q20',
+    question: 'Which dynasty founder encouraged Arab traders to import horses?',
+    options: [
+      { text: 'Sangama', isCorrect: false },
+      { text: 'Saluva', isCorrect: true },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q21',
+    question: 'Who was appointed as the guardian of Saluva Narasimha\'s underage son?',
+    options: [
+      { text: 'Saluva Timma', isCorrect: false },
+      { text: 'Narsa Nayaka', isCorrect: true },
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Tirumal', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q22',
+    question: 'Which ruler established diplomatic relations with the Portuguese?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q23',
+    question: 'Which Persian ambassador visited Vijayanagara during Devaraya II\'s reign?',
+    options: [
+      { text: 'Abdur Razzak', isCorrect: true },
+      { text: 'Marco Polo', isCorrect: false },
+      { text: 'Niccolò Canti', isCorrect: false },
+      { text: 'Domingos Pius', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q24',
+    question: 'Which ruler was responsible for sending an embassy to China in 1374 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+
+  // 5. Cultural and Architectural Contributions
+  {
+    id: 'q25',
+    question: 'Which ruler was a great patron of Telugu literature and hosted the Ashta Diganas?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q26',
+    question: 'Which literary work by Krishnadeva Raya was written in Sanskrit?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: true },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q27',
+    question: 'Which temple dedicated to Lord Vishnu was constructed during Krishnadeva Raya\'s reign?',
+    options: [
+      { text: 'Vitthalaswami Temple', isCorrect: true },
+      { text: 'Brihadeeswara Temple', isCorrect: false },
+      { text: 'Meenakshi Temple', isCorrect: false },
+      { text: 'Konark Temple', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q28',
+    question: 'Which city was established by Krishnadeva Raya?',
+    options: [
+      { text: 'Anegondi', isCorrect: false },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Nagalpur', isCorrect: true },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q29',
+    question: 'Which poet is recognized as the father of Telugu poetry and authored "Manucharitra"?',
+    options: [
+      { text: 'Srinath', isCorrect: false },
+      { text: 'Allasani Peddana', isCorrect: true },
+      { text: 'Gangadevi', isCorrect: false },
+      { text: 'Telaniram Ramakrishna', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q30',
+    question: 'Which work marks the "Classic Age" of Telugu literature under Krishnadeva Raya?',
+    options: [
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'All of the above', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q31',
+    question: 'Which ruler was known for constructing Nagalpur Nagar, Vijay Bhavan, and Hazara?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q32',
+    question: 'Which work was authored by Telaniram Ramakrishna?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q33',
+    question: 'Which title reflects Devaraya II\'s prowess in hunting elephants?',
+    options: [
+      { text: 'Imadidevaraya', isCorrect: false },
+      { text: 'Gajabetkar', isCorrect: true },
+      { text: 'Andhrabhoj', isCorrect: false },
+      { text: 'Yavanaraja', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q34',
+    question: 'Which title was NOT assumed by Krishnadeva Raya?',
+    options: [
+      { text: 'Andhrabhoj', isCorrect: false },
+      { text: 'Abhinav Bhoj', isCorrect: false },
+      { text: 'Gajabetkar', isCorrect: true },
+      { text: 'Yavanaraja Sthapanacharya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q35',
+    question: 'Which work was composed by Allasani Peddana?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: true },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q36',
+    question: 'Which ruler assumed the titles of Andhrabhoj, Abhinav Bhoj, Andhra Pitamaha, and Yavanaraja Sthapanacharya?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q37',
+    question: 'Which ruler made Anegondi the first capital of Vijayanagara?',
+    options: [
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q38',
+    question: 'Under which ruler did Vijayanagara annex Madurai in 1377 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q39',
+    question: 'Which work by Krishnadeva Raya was composed in Telugu?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: true },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q40',
+    question: 'Which dynasty was ruling Vijayanagara when Prataphudra was a feudatory?',
+    options: [
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+
+  // 6. Feudatories and Commanders
+  {
+    id: 'q41',
+    question: 'Prataphudra was a ruler of which dynasty before associating with Vijayanagara?',
+    options: [
+      { text: 'Hoysala', isCorrect: false },
+      { text: 'Kakatiya', isCorrect: true },
+      { text: 'Chola', isCorrect: false },
+      { text: 'Pandya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q42',
+    question: 'Prataphudra joined Vijayanagara as the commander of which state?',
+    options: [
+      { text: 'Kampili', isCorrect: true },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false },
+      { text: 'Mysore', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q43',
+    question: 'What role did Prataphudra hold in Kampili?',
+    options: [
+      { text: 'King', isCorrect: false },
+      { text: 'Commander (Senapati)', isCorrect: true },
+      { text: 'Minister', isCorrect: false },
+      { text: 'Diplomat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q44',
+    question: 'Which dynasty\'s founder was involved with Kampili as a commander?',
+    options: [
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+
+  // 7. External Relations
+  {
+    id: 'q45',
+    question: 'Which Italian traveler visited Vijayanagara during Devaraya I\'s reign?',
+    options: [
+      { text: 'Marco Polo', isCorrect: false },
+      { text: 'Niccolò Canti', isCorrect: true },
+      { text: 'Amerigo Vespucci', isCorrect: false },
+      { text: 'Giovanni da Verrazzano', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q46',
+    question: 'Which work was authored by Gangadevi to document Bukka I\'s victory?',
+    options: [
+      { text: 'Madura Vijayam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q47',
+    question: 'Which European power did Krishnadeva Raya establish diplomatic relations with?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true },
+      { text: 'French', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q48',
+    question: 'Which work describes Bukka I\'s victory over Madurai?',
+    options: [
+      { text: 'Madura Vijayam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q49',
+    question: 'Which dynasty was ruling Vijayanagara when the Vitthalaswami Temple was built?',
+    options: [
+      { text: 'Sangama', isCorrect: false },
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q50',
+    question: 'Which ruler authored "Pandurang Mahatmyam"?',
+    options: [
+      { text: 'Allasani Peddana', isCorrect: false },
+      { text: 'Gangadevi', isCorrect: false },
+      { text: 'Telaniram Ramakrishna', isCorrect: true },
+      { text: 'Srinath', isCorrect: false }
+    ]
+  },
+
+  // 8. Decline Factors
+  {
+    id: 'q51',
+    question: 'What were the main factors contributing to the decline of the Vijayanagara Empire?',
+    options: [
+      { text: 'Internal strife and rise of regional powers', isCorrect: true },
+      { text: 'Natural disasters and famine', isCorrect: false },
+      { text: 'Lack of strong leadership', isCorrect: false },
+      { text: 'Economic collapse', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q52',
+    question: 'Which event marked the beginning of the decline during the Aravidu Dynasty?',
+    options: [
+      { text: 'Establishment of the Kingdom of Mysore', isCorrect: true },
+      { text: 'Treaty with the Portuguese', isCorrect: false },
+      { text: 'Construction of Vitthalaswami Temple', isCorrect: false },
+      { text: 'Sending an embassy to China', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q53',
+    question: 'Which dynasty was ruling Vijayanagara when King Adyar established the Kingdom of Mysore?',
+    options: [
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: true },
+      { text: 'Sangama', isCorrect: false }
+    ]
+  },
+
+  // 9. Miscellaneous
+  {
+    id: 'q54',
+    question: 'Which ruler assumed the title of the founder of the Hindu Veda-marga?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q55',
+    question: 'Which work was authored by Telaniram Ramakrishna?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q56',
+    question: 'Which ruler was known as the "Hunter of elephants"?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q57',
+    question: 'Which work was authored by Krishnadeva Raya in Sanskrit?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q58',
+    question: 'Which ruler was known for merging the Hoysala Kingdom into Vijayanagara and conquering Madura?',
+    options: [
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q59',
+    question: 'Which ruler was known as "Gajabetkar" in Vijayanagara?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q60',
+    question: 'Which work was authored by Krishnadeva Raya in Telugu?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: true },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+
+  // 61. Founders and Dynasties
+  {
+    id: 'q61',
+    question: 'Who were the founders of the Sangama Dynasty?',
+    options: [
+      { text: 'Vira Narasimha & Krishnadeva Raya', isCorrect: false },
+      { text: 'Harihara I & Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha & Vira Narasimha', isCorrect: false },
+      { text: 'Tirumal & Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q62',
+    question: 'In which year was the Vijayanagara Empire established?',
+    options: [
+      { text: '1336 CE', isCorrect: true },
+      { text: '1485 CE', isCorrect: false },
+      { text: '1505 CE', isCorrect: false },
+      { text: '1570 CE', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q63',
+    question: 'What was the first capital of the Vijayanagara Empire?',
+    options: [
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false },
+      { text: 'Anegondi', isCorrect: true },
+      { text: 'Madurai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q64',
+    question: 'Which dynasty ruled Vijayanagara immediately before the Saluva Dynasty?',
+    options: [
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false },
+      { text: 'Hoysala', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q65',
+    question: 'Who founded the Aravidu Dynasty?',
+    options: [
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Tirumal', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q66',
+    question: 'Approximately how many years did the four dynasties of Vijayanagara rule?',
+    options: [
+      { text: '200 years', isCorrect: false },
+      { text: '300 years', isCorrect: true },
+      { text: '400 years', isCorrect: false },
+      { text: '500 years', isCorrect: false }
+    ]
+  },
+
+  // 2. Capitals and Territorial Expansion (continued)
+  {
+    id: 'q67',
+    question: 'After Venkata II ascended the throne, what was the capital of the Aravidu Dynasty?',
+    options: [
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: true },
+      { text: 'Nagalpur', isCorrect: false },
+      { text: 'Anegondi', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q68',
+    question: 'Which river was declared the boundary between the Bahmani Sultanate and Vijayanagara?',
+    options: [
+      { text: 'Tungabhadra', isCorrect: false },
+      { text: 'Krishna', isCorrect: true },
+      { text: 'Godavari', isCorrect: false },
+      { text: 'Kaveri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q69',
+    question: 'Which new city was built by Krishnadeva Raya?',
+    options: [
+      { text: 'Anegondi', isCorrect: false },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Nagalpur', isCorrect: true },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q70',
+    question: 'Which city was established by King Adyar in 1612 CE?',
+    options: [
+      { text: 'Mysore', isCorrect: true },
+      { text: 'Madurai', isCorrect: false },
+      { text: 'Hoysala', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+
+  // 3. Key Rulers and Their Contributions (continued)
+  {
+    id: 'q71',
+    question: 'Who was the last ruler of the Sangama Dynasty?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Virubaksh I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q72',
+    question: 'Which ruler built a dam on the Tungabhadra river in 1410 CE?',
+    options: [
+      { text: 'Devaraya I', isCorrect: true },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q73',
+    question: 'Who succeeded Harihara I as the ruler of the Sangama Dynasty?',
+    options: [
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q74',
+    question: 'Which ruler is known as the most glorious king of the Sangama Dynasty?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q75',
+    question: 'Which ruler of Vijayanagara was also known as Imadidevaraya?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q76',
+    question: 'Which ruler was described by Babur as one of the most powerful Hindu rulers?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q77',
+    question: 'Who was the last ruler of the Aravidu Dynasty?',
+    options: [
+      { text: 'Tirumal', isCorrect: false },
+      { text: 'Venkata II', isCorrect: false },
+      { text: 'Ranga III', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+
+  // 4. Military and Diplomacy (continued)
+  {
+    id: 'q78',
+    question: 'Which ruler conquered the Hoysala Kingdom in 1346 CE?',
+    options: [
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q79',
+    question: 'Which ruler sent an embassy to China in 1374 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q80',
+    question: 'Which dynasty founder encouraged Arab traders to import horses?',
+    options: [
+      { text: 'Sangama', isCorrect: false },
+      { text: 'Saluva', isCorrect: true },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q81',
+    question: 'Who was appointed as the guardian of Saluva Narasimha\'s underage son?',
+    options: [
+      { text: 'Saluva Timma', isCorrect: false },
+      { text: 'Narsa Nayaka', isCorrect: true },
+      { text: 'Vira Narasimha', isCorrect: false },
+      { text: 'Tirumal', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q82',
+    question: 'Which ruler established diplomatic relations with the Portuguese?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q83',
+    question: 'Which Persian ambassador visited Vijayanagara during Devaraya II\'s reign?',
+    options: [
+      { text: 'Abdur Razzak', isCorrect: true },
+      { text: 'Marco Polo', isCorrect: false },
+      { text: 'Niccolò Canti', isCorrect: false },
+      { text: 'Domingos Pius', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q84',
+    question: 'Which ruler was responsible for sending an embassy to China in 1374 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+
+  // 5. Cultural and Architectural Contributions (continued)
+  {
+    id: 'q85',
+    question: 'Which ruler was a great patron of Telugu literature and hosted the Ashta Diganas?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q86',
+    question: 'Which literary work by Krishnadeva Raya was written in Sanskrit?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: true },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q87',
+    question: 'Which temple dedicated to Lord Vishnu was constructed during Krishnadeva Raya\'s reign?',
+    options: [
+      { text: 'Vitthalaswami Temple', isCorrect: true },
+      { text: 'Brihadeeswara Temple', isCorrect: false },
+      { text: 'Meenakshi Temple', isCorrect: false },
+      { text: 'Konark Temple', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q88',
+    question: 'Which city was established by Krishnadeva Raya?',
+    options: [
+      { text: 'Anegondi', isCorrect: false },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Nagalpur', isCorrect: true },
+      { text: 'Chandragiri', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q89',
+    question: 'Which poet is recognized as the father of Telugu poetry and authored "Manucharitra"?',
+    options: [
+      { text: 'Srinath', isCorrect: false },
+      { text: 'Allasani Peddana', isCorrect: true },
+      { text: 'Gangadevi', isCorrect: false },
+      { text: 'Telaniram Ramakrishna', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q90',
+    question: 'Which work marks the "Classic Age" of Telugu literature under Krishnadeva Raya?',
+    options: [
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'All of the above', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q91',
+    question: 'Which ruler was known for constructing Nagalpur Nagar, Vijay Bhavan, and Hazara?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q92',
+    question: 'Which work was authored by Telaniram Ramakrishna?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q93',
+    question: 'Which title reflects Devaraya II\'s prowess in hunting elephants?',
+    options: [
+      { text: 'Imadidevaraya', isCorrect: false },
+      { text: 'Gajabetkar', isCorrect: true },
+      { text: 'Andhrabhoj', isCorrect: false },
+      { text: 'Yavanaraja', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q94',
+    question: 'Which title was NOT assumed by Krishnadeva Raya?',
+    options: [
+      { text: 'Andhrabhoj', isCorrect: false },
+      { text: 'Abhinav Bhoj', isCorrect: false },
+      { text: 'Gajabetkar', isCorrect: true },
+      { text: 'Yavanaraja Sthapanacharya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q95',
+    question: 'Which work was composed by Allasani Peddana?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: true },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q96',
+    question: 'Which ruler assumed the titles of Andhrabhoj, Abhinav Bhoj, Andhra Pitamaha, and Yavanaraja Sthapanacharya?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: true },
+      { text: 'Venkata II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q97',
+    question: 'Which ruler made Anegondi the first capital of Vijayanagara?',
+    options: [
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q98',
+    question: 'Under which ruler did Vijayanagara annex Madurai in 1377 CE?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q99',
+    question: 'Which work by Krishnadeva Raya was composed in Telugu?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: true },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q100',
+    question: 'Which dynasty was ruling Vijayanagara when Prataphudra was a feudatory?',
+    options: [
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+
+  // 6. Feudatories and Commanders (continued)
+  {
+    id: 'q101',
+    question: 'Prataphudra was a ruler of which dynasty before associating with Vijayanagara?',
+    options: [
+      { text: 'Hoysala', isCorrect: false },
+      { text: 'Kakatiya', isCorrect: true },
+      { text: 'Chola', isCorrect: false },
+      { text: 'Pandya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q102',
+    question: 'Prataphudra joined Vijayanagara as the commander of which state?',
+    options: [
+      { text: 'Kampili', isCorrect: true },
+      { text: 'Penukonda', isCorrect: false },
+      { text: 'Chandragiri', isCorrect: false },
+      { text: 'Mysore', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q103',
+    question: 'What role did Prataphudra hold in Kampili?',
+    options: [
+      { text: 'King', isCorrect: false },
+      { text: 'Commander (Senapati)', isCorrect: true },
+      { text: 'Minister', isCorrect: false },
+      { text: 'Diplomat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q104',
+    question: 'Which dynasty\'s founder was involved with Kampili as a commander?',
+    options: [
+      { text: 'Sangama', isCorrect: true },
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+
+  // 7. External Relations (continued)
+  {
+    id: 'q105',
+    question: 'Which Italian traveler visited Vijayanagara during Devaraya I\'s reign?',
+    options: [
+      { text: 'Marco Polo', isCorrect: false },
+      { text: 'Niccolò Canti', isCorrect: true },
+      { text: 'Amerigo Vespucci', isCorrect: false },
+      { text: 'Giovanni da Verrazzano', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q106',
+    question: 'Which work was authored by Gangadevi to document Bukka I\'s victory?',
+    options: [
+      { text: 'Madura Vijayam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q107',
+    question: 'Which European power did Krishnadeva Raya establish diplomatic relations with?',
+    options: [
+      { text: 'British', isCorrect: false },
+      { text: 'Dutch', isCorrect: false },
+      { text: 'Portuguese', isCorrect: true },
+      { text: 'French', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q108',
+    question: 'Which work describes Bukka I\'s victory over Madurai?',
+    options: [
+      { text: 'Madura Vijayam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q109',
+    question: 'Which dynasty was ruling Vijayanagara when the Vitthalaswami Temple was built?',
+    options: [
+      { text: 'Sangama', isCorrect: false },
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: true },
+      { text: 'Aravidu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q110',
+    question: 'Which ruler authored "Pandurang Mahatmyam"?',
+    options: [
+      { text: 'Allasani Peddana', isCorrect: false },
+      { text: 'Gangadevi', isCorrect: false },
+      { text: 'Telaniram Ramakrishna', isCorrect: true },
+      { text: 'Srinath', isCorrect: false }
+    ]
+  },
+
+  // 8. Decline Factors (continued)
+  {
+    id: 'q111',
+    question: 'What were the main factors contributing to the decline of the Vijayanagara Empire?',
+    options: [
+      { text: 'Internal strife and rise of regional powers', isCorrect: true },
+      { text: 'Natural disasters and famine', isCorrect: false },
+      { text: 'Lack of strong leadership', isCorrect: false },
+      { text: 'Economic collapse', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q112',
+    question: 'Which event marked the beginning of the decline during the Aravidu Dynasty?',
+    options: [
+      { text: 'Establishment of the Kingdom of Mysore', isCorrect: true },
+      { text: 'Treaty with the Portuguese', isCorrect: false },
+      { text: 'Construction of Vitthalaswami Temple', isCorrect: false },
+      { text: 'Sending an embassy to China', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q113',
+    question: 'Which dynasty was ruling Vijayanagara when King Adyar established the Kingdom of Mysore?',
+    options: [
+      { text: 'Saluva', isCorrect: false },
+      { text: 'Tuluva', isCorrect: false },
+      { text: 'Aravidu', isCorrect: true },
+      { text: 'Sangama', isCorrect: false }
+    ]
+  },
+
+  // 9. Miscellaneous (continued)
+  {
+    id: 'q114',
+    question: 'Which ruler assumed the title of the founder of the Hindu Veda-marga?',
+    options: [
+      { text: 'Harihara I', isCorrect: false },
+      { text: 'Bukka I', isCorrect: true },
+      { text: 'Saluva Narasimha', isCorrect: false },
+      { text: 'Krishnadeva Raya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q115',
+    question: 'Which work was authored by Telaniram Ramakrishna?',
+    options: [
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Pandurang Mahatmyam', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q116',
+    question: 'Which ruler was known as the "Hunter of elephants"?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q117',
+    question: 'Which work was authored by Krishnadeva Raya in Sanskrit?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: true },
+      { text: 'Amuktamalayad', isCorrect: false },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q118',
+    question: 'Which ruler was known for merging the Hoysala Kingdom into Vijayanagara and conquering Madura?',
+    options: [
+      { text: 'Harihara I', isCorrect: true },
+      { text: 'Bukka I', isCorrect: false },
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q119',
+    question: 'Which ruler was known as "Gajabetkar" in Vijayanagara?',
+    options: [
+      { text: 'Devaraya I', isCorrect: false },
+      { text: 'Devaraya II', isCorrect: true },
+      { text: 'Krishnadeva Raya', isCorrect: false },
+      { text: 'Saluva Narasimha', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q120',
+    question: 'Which work was authored by Krishnadeva Raya in Telugu?',
+    options: [
+      { text: 'Jambavati Kalyanam', isCorrect: false },
+      { text: 'Amuktamalayad', isCorrect: true },
+      { text: 'Harikatha Saranasam', isCorrect: false },
+      { text: 'Manucharitra', isCorrect: false }
+    ]
+  }
+];
+
+
+
+        // Function to shuffle an array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the questions dynamically
+        function renderQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            const questionsArray = getQuestions(); // Retrieve the questions array
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 25) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 25 questions in the questions array.</p>';
+                return;
+            }
+
+            // Randomly select 25 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 25);
+
+            // Assign shuffledQuestions to the global variable
+            shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
+
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `question-${index + 1}`; // Assign unique ID
+
+                // Question text
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                // Options
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                // Shuffle options and assign back to q.options
+                q.options = shuffleArray([...q.options]);
+                const shuffledOptions = q.options;
+
+                // Assign labels A, B, C, D dynamically
+                const labels = ['A', 'B', 'C', 'D'];
+
+                shuffledOptions.forEach((option, optIndex) => {
+                    const optionId = `${q.id}_option${optIndex + 1}`; // Unique ID for each option
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = q.id;
+                    radioInput.value = labels[optIndex]; // Assign label as value
+
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = `${labels[optIndex]}) ${option.text}`;
+
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+
+                    // Add Attempted Class when an option is selected
+                    radioInput.addEventListener('change', function() {
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink && !questionMapLink.classList.contains('correct') && !questionMapLink.classList.contains('incorrect')) {
+                            questionMapLink.classList.add('attempted');
+                        }
+                    });
+                });
+
+                questionDiv.appendChild(optionsDiv);
+
+                // Add Feedback Div Below Options
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.id = `feedback-${index + 1}`; // Unique ID for each feedback div
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+
+            generateQuestionMap(shuffledQuestions.length);
+        }
+
+        // Function to retrieve the questions array
+        function getQuestions() {
+            // Replace this with your actual questions array
+            return questions; // Assuming 'questions' is defined globally
+        }
+
+        // Function to randomly select n questions from the questions array
+        function getRandomQuestions(questionsArray, n) {
+            const shuffled = shuffleArray([...questionsArray]);
+            return shuffled.slice(0, n);
+        }
+
+        // Function to generate the Question Map links
+        function generateQuestionMap(totalQuestions) {
+            const questionLinksDiv = document.getElementById('questionLinks');
+            questionLinksDiv.innerHTML = ''; // Clear any existing links
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const link = document.createElement('a');
+                link.href = `#question-${i}`;
+                link.classList.add('question-link');
+                link.textContent = `Q${i}`;
+
+                questionLinksDiv.appendChild(link);
+            }
+        }
+
+        // Timer Functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                // Add alert class when time is less than 1 minute
+                if (timer <= 60 && timer > 0) { // 60 seconds = 1 minute
+                    display.classList.add('alert');
+                }
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        // Function to automatically submit the quiz when time is up
+        function autoSubmit() {
+            alert("Time's up! The quiz will now be submitted.");
+            checkAnswers();
+        }
+
+        // Initialize the quiz on page load
+        window.onload = function () {
+            renderQuestions(); // Render questions on page load
+            const tenMinutes = 60 * 10, // 10 minutes in seconds
+                  display = document.getElementById('timer');
+            startTimer(tenMinutes, display);
+        };
+
+        // Function to check answers and display the result
+        function checkAnswers() {
+            let score = 0;
+            let totalQuestions = shuffledQuestions.length; // Total number of questions
+
+            shuffledQuestions.forEach((q, index) => { // Iterate over each question
+                const selectedOption = document.querySelector(`input[name="${q.id}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index + 1}`);
+                
+                if (selectedOption) {
+                    // Get the selected label (A, B, C, D)
+                    const selectedLabel = selectedOption.value;
+                    // Map label to option index
+                    const labelIndex = ['A', 'B', 'C', 'D'].indexOf(selectedLabel);
+                    if (labelIndex !== -1 && q.options[labelIndex].isCorrect) {
+                        score += 1; // Add 1 mark for correct answer
+
+                        // Mark the question link as correct in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('correct');
+                            questionMapLink.classList.remove('incorrect', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Right';
+                            feedbackDiv.classList.add('right');
+                            feedbackDiv.classList.remove('wrong', 'not-attempted');
+                        }
+                    } else {
+                        score -= 0.5; // Deduct 0.5 marks for incorrect answer
+
+                        // Mark the question link as incorrect in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('incorrect');
+                            questionMapLink.classList.remove('correct', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Wrong';
+                            feedbackDiv.classList.add('wrong');
+                            feedbackDiv.classList.remove('right', 'not-attempted');
+                        }
+                    }
+                } else {
+                    // If the question was not answered, mark as not attempted
+                    const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                    if (questionMapLink) {
+                        // Remove both classes if the question was not answered
+                        questionMapLink.classList.remove('correct', 'incorrect', 'attempted');
+                    }
+
+                    // Update Feedback Below the Question
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Not Attempted';
+                        feedbackDiv.classList.add('not-attempted');
+                        feedbackDiv.classList.remove('right', 'wrong');
+                    }
+                }
+            });
+
+            // Round the score to one decimal place
+            score = Math.round(score * 10) / 10;
+
+            // Update the result in the Question Map Sidebar
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Update the result below the questions list
+            const resultDivBelow = document.getElementById('resultBelow');
+            resultDivBelow.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Disable all inputs to prevent changes after submission
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            // Disable the submit buttons to prevent multiple submissions
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+
+            const submitButtonBelow = document.getElementById('submitBtnBelow');
+            if (submitButtonBelow) {
+                submitButtonBelow.disabled = true;
+            }
+        }
+
+        // Toggle Question Map on small screens
+        const toggleBtn = document.getElementById('toggleQuestionMap');
+        const questionMap = document.getElementById('questionMap');
+
+        toggleBtn.addEventListener('click', () => {
+            questionMap.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
